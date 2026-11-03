@@ -1,0 +1,35 @@
+/* Menus */
+"About Quire" = "Quire について";
+"Hide Quire" = "Quire を隠す";
+"Quit Quire" = "Quire を終了";
+"File" = "ファイル";
+"Open…" = "開く…";
+"Open Recent" = "最近使った項目を開く";
+"Clear Menu" = "メニューを消去";
+"Close" = "閉じる";
+"Edit" = "編集";
+"Copy" = "コピー";
+"Select All" = "すべてを選択";
+"View" = "表示";
+"Zoom In" = "拡大";
+"Zoom Out" = "縮小";
+"Actual Size" = "実際のサイズ";
+"Toggle Sidebar" = "サイドバーを表示/非表示";
+"Go" = "移動";
+"Next Chapter" = "次の章";
+"Previous Chapter" = "前の章";
+"Back" = "戻る";
+"Forward" = "進む";
+"Window" = "ウインドウ";
+"Minimize" = "しまう";
+"Zoom" = "拡大/縮小";
+
+/* Errors */
+"The file isn't a valid EPUB." = "このファイルは正しい EPUB ではありません。";
+"The book is protected by DRM and can't be opened." = "この本は DRM で保護されているため開けません。";
+"The file isn't a ZIP archive." = "このファイルは ZIP アーカイブではありません。";
+"The file uses a ZIP feature Quire doesn't support." = "このファイルは Quire が対応していない ZIP 形式を使っています。";
+"The file is damaged." = "ファイルが壊れています。";
+
+/* Quick Look preview */
+"Continue reading in Quire." = "続きは Quire で読めます。";
