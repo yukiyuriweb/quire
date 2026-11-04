@@ -51,6 +51,7 @@ final class ZipArchive {
             return data.subdata(in: range)
         case 8:
             if entry.size == 0 { return Data() }
+            guard entry.compressedSize > 0 else { throw ZipError.corrupt }
             var out = Data(count: entry.size)
             let written = out.withUnsafeMutableBytes { dst in
                 data[range].withUnsafeBytes { src in

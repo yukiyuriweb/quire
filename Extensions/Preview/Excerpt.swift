@@ -57,7 +57,7 @@ final class Excerpt {
             if used + weight > Self.budget, let element = child as? XMLElement,
                Self.containers.contains(element.localName ?? ""), Self.elements(element).count > 1 {
                 let shell = XMLElement(name: element.localName ?? "div")
-                element.attributes?.forEach { shell.addAttribute($0.copy() as! XMLNode) }
+                element.attributes?.filter { $0.localName != "style" }.forEach { shell.addAttribute($0.copy() as! XMLNode) }
                 out.addChild(shell)
                 if !take(element, base: base, into: shell) { return false }
                 continue
@@ -70,6 +70,8 @@ final class Excerpt {
     }
 
     /// A copy of `node` without scripts, styles or live links, its images pointing to attachments.
+    /// Inline styles go too (a `color: black` would be unreadable in dark mode), except inside an
+    /// `<svg>`, whose drawing may depend on them.
     private func clean(_ node: XMLNode, base: URL) -> XMLNode? {
         if node.kind == .comment || node.kind == .processingInstruction { return nil }
         let copy = node.copy() as! XMLNode
@@ -77,6 +79,9 @@ final class Excerpt {
         if Self.dropped.contains(root.localName ?? "") { return nil }
         for element in [root] + Self.elements(root) {
             for child in element.children ?? [] where Self.dropped.contains(child.localName ?? "") { child.detach() }
+            if !sequence(first: element as XMLNode, next: \.parent).contains(where: { $0.localName == "svg" }) {
+                element.attributes?.filter { $0.localName == "style" }.forEach { element.removeAttribute(forName: $0.name ?? "") }
+            }
             switch element.localName {
             case "a":
                 element.removeAttribute(forName: "href")

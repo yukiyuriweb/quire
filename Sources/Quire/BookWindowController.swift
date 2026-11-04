@@ -62,6 +62,9 @@ final class BookWindowController: NSWindowController, NSWindowDelegate, NSOutlin
     private let outline = NSOutlineView()
 
     private var chapter = 0
+    /// False while showing a document outside the reading order (`linear="no"`, e.g. endnotes),
+    /// whose scroll position must not be saved as `chapter`'s.
+    private var inSpine = true
     private var fraction = 0.0
     private var atTop = true
     private var atBottom = true
@@ -276,12 +279,13 @@ final class BookWindowController: NSWindowController, NSWindowDelegate, NSOutlin
             webView.load(URLRequest(url: url))
             return
         }
-        // Same document: just scroll, without reloading.
-        let id = url.fragment(percentEncoded: false) ?? ""
-        let literal = (try? String(data: JSONEncoder().encode(id), encoding: .utf8)) ?? "\"\""
-        let js = id.isEmpty ? "scrollTo(0, 0)"
-            : "(document.getElementById(\(literal)) || document.getElementsByName(\(literal))[0])?.scrollIntoView()"
-        webView.evaluateJavaScript(js, in: nil, in: .defaultClient)
+        // Same document: navigate to the fragment ("#" alone is the top). That scrolls without
+        // reloading and, unlike scrolling from script, leaves an entry for Back.
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        if components?.fragment == nil { components?.fragment = "" }
+        let target = components?.url?.absoluteString ?? url.absoluteString
+        let literal = (try? String(data: JSONEncoder().encode(target), encoding: .utf8)) ?? "\"#\""
+        webView.evaluateJavaScript("location.href = \(literal)", in: nil, in: .defaultClient)
     }
 
     private static func document(_ url: URL) -> URL {
@@ -341,6 +345,7 @@ final class BookWindowController: NSWindowController, NSWindowDelegate, NSOutlin
     // MARK: - Reading position
 
     private func savePosition() {
+        guard inSpine else { return }
         var positions = UserDefaults.standard.dictionary(forKey: "positions") ?? [:]
         positions[positionKey] = ["chapter": Double(chapter), "fraction": fraction]
         UserDefaults.standard.set(positions, forKey: "positions")
@@ -366,9 +371,9 @@ final class BookWindowController: NSWindowController, NSWindowDelegate, NSOutlin
 
     func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
         guard let url = webView.url else { return }
-        if let index = book.spine.firstIndex(where: { $0 == Self.document(url) }) {
-            chapter = index
-        }
+        let index = book.spine.firstIndex(where: { $0 == Self.document(url) })
+        if let index { chapter = index }
+        inSpine = index != nil
         syncSelection(with: url)
         window?.toolbar?.validateVisibleItems()
     }
