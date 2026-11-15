@@ -34,7 +34,7 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
     <key>CFBundlePackageType</key><string>APPL</string>
     <key>CFBundleShortVersionString</key><string>0.1</string>
     <key>CFBundleVersion</key><string>1</string>
-    <key>LSMinimumSystemVersion</key><string>13.0</string>
+    <key>LSMinimumSystemVersion</key><string>26.0</string>
     <key>NSHighResolutionCapable</key><true/>
     <key>CFBundleDocumentTypes</key>
     <array>
@@ -59,7 +59,7 @@ build_extension() {  # <name> <bundle id> <extension point> <principal class> <e
     EXT="$APP/Contents/PlugIns/$NAME.appex"
     mkdir -p "$EXT/Contents/MacOS" "$EXT/Contents/Resources"
     swiftc -O -parse-as-library -application-extension -module-name "$NAME" \
-        -target "$(uname -m)-apple-macos13.0" \
+        -target "$(uname -m)-apple-macos26.0" \
         -Xlinker -e -Xlinker _NSExtensionMain \
         Sources/Quire/Zip.swift Sources/Quire/Book.swift "$@" -o "$EXT/Contents/MacOS/$NAME"
     cp -R Localization/*.lproj "$EXT/Contents/Resources/"
@@ -76,7 +76,7 @@ build_extension() {  # <name> <bundle id> <extension point> <principal class> <e
     <key>CFBundlePackageType</key><string>XPC!</string>
     <key>CFBundleShortVersionString</key><string>0.1</string>
     <key>CFBundleVersion</key><string>1</string>
-    <key>LSMinimumSystemVersion</key><string>13.0</string>
+    <key>LSMinimumSystemVersion</key><string>26.0</string>
     <key>NSExtension</key>
     <dict>
         <key>NSExtensionPointIdentifier</key><string>$POINT</string>

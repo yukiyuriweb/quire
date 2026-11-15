@@ -1,10 +1,11 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
     name: "Quire",
-    platforms: [.macOS(.v13)],
+    platforms: [.macOS(.v26)],
     targets: [
         .executableTarget(name: "Quire", path: "Sources/Quire")
-    ]
+    ],
+    swiftLanguageModes: [.v5]
 )
